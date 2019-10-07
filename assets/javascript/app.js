@@ -1,34 +1,179 @@
+// VARIABLES
 var correctAnswers=0;
 var incorrectAnswers=0;
-var unansweredQuestions=1;
+var unansweredQuestions=8;
+var currentQuestion = 0;
+var time = 60;
+var buttonValue=0;
 
+// QUESTIONS AND ANSWERS
+var triviaQs = [
+    {
+    question: "Who was the first superstar dog",
+    answers: ["Rin Tin Tin", "Pluto", "Lassie"],
+    correct: 1,
+    image: "assets/images/rintintin.gif"
+    },
 
-$("#start").on("click", function() {
-q1();
-correct();
-incorrect();
-})
+    {
+    question: "How many times are dogs mentioned in the Bible?",
+    answers: ["3", "14", "35"],
+    correct: 3,
+    image: "assets/images/dog-books.gif"
+    },
 
-function q1() {
-$("#questions").html("<h3>Question 1: Which was the first dog superstar?</h3>");
- $("#answers").html("<button class='correct'>Rin Tin Tin</button><br><button class='incorrect'>Lassie</button><br><button class='incorrect'>Pluto</button>")
+    {
+    question: "Dalmatian puppies are born with how many spots?",
+    answers: ["Zero", "At least 5", "Dozens"],
+    correct: 1,
+    image: "assets/images/dalmatians.gif"
+    },
+
+    {
+    question: "A dog is as smart as a:",
+    answers: ["One year old", "Two year old", "Three year old"],
+    correct: 2,
+    image: "assets/images/smart-dog.gif"
+    },
+
+    {
+    question: "The most common health problem in dogs is:",
+    answers: ["Fleas", "Obesity", "Broken bones"] ,
+    correct: 2,
+    image: "assets/images/dog-eating.gif"
+    },
+
+    {
+    question: "What is the favorite breed of the Queen of England?",
+    answers: ["Basset Hound", "English Shepherd", "Corgi"],
+    correct: 3,
+    image: "assets/images/queen-dogs.gif"
+    },
+
+    {
+    question: "Which breed has a black tongue?",
+    answers: ["Chow Chow","Rottweiler","Weimaraner"],
+    correct: 1,
+    image: "assets/images/dog-tongue.gif"
+    },
+
+    {
+    question: "The country with the highest population of dogs is:",
+    answers: ["China","France","United States"],
+    correct: 3,
+    image: "assets/images/dog-population.gif"
+    },
+
+];
+
+//To count alloted time
+function timer() {
+    timeCounter = setInterval(countDown,1000);
+    function countDown () {
+        if (time>0) {
+            time--;
+        }
+        if (time<1) {
+            clearInterval(timeCounter);
+            timeOut();
+        }
+    $("#timer").html("You have "+time+" seconds left");
+    };
 }
 
-function correct() {
-$(".correct").on("click", function () {
-$("#answers").html("You are correct!");
-correctAnswers++;
-unansweredQuestions--;
-console.log("Corrects: "+ correctAnswers);
-console.log("Unanswered: " + unansweredQuestions);
-}) }
+//If your alloted time runs out
+function timeOut () {
+    if (time===0) {
+        $("#answers").empty();
+        $("#timer").empty();
+        $("#questions").html("<h2>You ran out of time!</h2>");
+        $("#correct-answers").html("Correct answers: " + correctAnswers)        
+        $("#incorrect-answers").html("Incorrect answers: " +incorrectAnswers)        
+        $("#unanswered-questions").html("Unanswered questions: " +unansweredQuestions) 
+        //$("#container").append("<button id='restart'> Restart </button>");
+    }
+}
 
-function incorrect() {
+//To start the Game after click on start button
+function start () {
+    currentQuestion=1
+    showQuestion();
+    
+}
 
-$(".incorrect").on("click", function () {
-$("#answers").html("You are incorrect!");
-incorrectAnswers++;
-unansweredQuestions--;
-console.log("Incorrects: "+ incorrectAnswers);
-console.log("Unanswered: " + unansweredQuestions);
-}) }
+//To show the question and its answers
+function showQuestion () {
+    timer();
+    timeOut();
+    $("#questions").text(triviaQs[currentQuestion-1].question);
+    console.log(triviaQs[currentQuestion-1].question);
+    $("#answers").html("<button value='1'>"+(triviaQs[currentQuestion-1].answers[0])+"</button><br><button value='2'>"+(triviaQs[currentQuestion-1].answers[1])+"</button><br><button value='3'>"+(triviaQs[currentQuestion-1].answers[2])+"</button>");
+    checkAnswer();
+}
+
+//To catch the user's selected answer 
+function checkAnswer () {
+$("button").on("click", (function() {
+    //$("#timer").empty();
+    clearInterval(timeCounter);
+    buttonValue=$(this).val();
+    //console.log(buttonValue);
+    //console.log((triviaQs[currentQuestion-1].correct).toString());
+    //and see if it is correct or incorrect
+    if (buttonValue===(triviaQs[currentQuestion-1].correct).toString()) {
+        //alert("correct"); This needs to stay just for some seconds, so put it inside an interval
+        $("#answers").empty();
+        $("#questions").html("<h2>You are correct!</h2>")
+        $("#questions").append("<img src='"+triviaQs[currentQuestion-1].image+"'</img>");
+        correctAnswers++;
+        unansweredQuestions--;
+        currentQuestion++;
+        $("#timer").empty();
+    }
+
+    else if (buttonValue!==(triviaQs[currentQuestion-1].correct).toString()) {
+        //alert("incorrect");
+        $("#answers").empty();
+        $("#questions").html("<h2>You are incorrect!</h2>")
+        $("#questions").append("<img src='"+triviaQs[currentQuestion-1].image+"'</img>");
+        incorrectAnswers++;
+        unansweredQuestions--;
+        currentQuestion++;
+        $("#timer").empty();
+        
+    }
+    setInterval(nextQuestion,4000);
+}))
+}
+
+//Show next question
+function nextQuestion () {
+    showQuestion();
+}
+
+//Click on start button
+$("#start").click(start);
+
+//     var userGuess = $(this).text();
+//     if (userGuess === triviaGame[currentQuestion].correct) {
+//         clearInterval(timeCounter);
+//         //userWin();
+//         alert("correct")
+//     }
+//     else {
+//         clearInterval(timeCounter);
+//         //userLoss();
+//         alert("incorrect");
+//     }
+// }));
+
+
+//RESTART FUNCTION AFTER TIME UP (not working)
+// function reStart () {
+//     alert("here we go again");
+// }
+
+// $("#restart").on("click", function () {
+//     alert("yeah!");
+// });
+
