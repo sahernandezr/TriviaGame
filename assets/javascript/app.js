@@ -3,7 +3,7 @@ var correctAnswers=0;
 var incorrectAnswers=0;
 var unansweredQuestions=8;
 var currentQuestion = 0;
-var time = 60;
+var time = 15;
 var buttonValue=0;
 
 // QUESTIONS AND ANSWERS
@@ -81,16 +81,31 @@ function timer() {
     };
 }
 
-//If your alloted time runs out
+//to give results if your alloted time runs out
 function timeOut () {
     if (time===0) {
         $("#answers").empty();
-        $("#timer").empty();
+        $("#timer").hide();
         $("#questions").html("<h2>You ran out of time!</h2>");
         $("#correct-answers").html("Correct answers: " + correctAnswers)        
         $("#incorrect-answers").html("Incorrect answers: " +incorrectAnswers)        
         $("#unanswered-questions").html("Unanswered questions: " +unansweredQuestions) 
-        //$("#container").append("<button id='restart'> Restart </button>");
+        $("#unanswered-questions").append("<br><a href='index.html'><button id='restart'> Restart </button></a>");
+    }
+}
+
+//to give results if you answer all the questions
+function allAnswered () {
+
+    if (unansweredQuestions===0) {
+	clearInterval(timeCounter);
+        $("#answers").empty();
+        $("#timer").empty();
+        $("#questions").html("<h2>You completed the trivia!</h2>");
+        $("#correct-answers").html("Correct answers: " + correctAnswers)        
+        $("#incorrect-answers").html("Incorrect answers: " +incorrectAnswers)        
+        $("#unanswered-questions").html("Unanswered questions: " +unansweredQuestions) 
+        $("#unanswered-questions").append("<br><a href='index.html'><button id='restart'> Restart </button></a>");
     }
 }
 
@@ -103,12 +118,27 @@ function start () {
 
 //To show the question and its answers
 function showQuestion () {
+    time=15;
     timer();
     timeOut();
+    allAnswered();
     $("#questions").text(triviaQs[currentQuestion-1].question);
     console.log(triviaQs[currentQuestion-1].question);
     $("#answers").html("<button value='1'>"+(triviaQs[currentQuestion-1].answers[0])+"</button><br><button value='2'>"+(triviaQs[currentQuestion-1].answers[1])+"</button><br><button value='3'>"+(triviaQs[currentQuestion-1].answers[2])+"</button>");
     checkAnswer();
+    clearInterval(resAnswerPage);
+
+	if (unansweredQuestions===0) {
+	clearInterval(timeCounter);
+	$("#answers").empty();
+        $("#questions").html("<h2>You are finished!</h2>");
+	$("#questions").append("<br>Correct answers: "+correctAnswers);
+	$("#questions").append("<br>Incorrect answers: "+incorrectAnswers);
+	$("#questions").append("<br>Unaswered questions: "+unansweredQuestions);
+        $("#timer").empty();
+
+};
+
 }
 
 //To catch the user's selected answer 
@@ -142,7 +172,7 @@ $("button").on("click", (function() {
         $("#timer").empty();
         
     }
-    setInterval(nextQuestion,4000);
+    resAnswerPage=setInterval(nextQuestion,4000);
 }))
 }
 
@@ -153,27 +183,4 @@ function nextQuestion () {
 
 //Click on start button
 $("#start").click(start);
-
-//     var userGuess = $(this).text();
-//     if (userGuess === triviaGame[currentQuestion].correct) {
-//         clearInterval(timeCounter);
-//         //userWin();
-//         alert("correct")
-//     }
-//     else {
-//         clearInterval(timeCounter);
-//         //userLoss();
-//         alert("incorrect");
-//     }
-// }));
-
-
-//RESTART FUNCTION AFTER TIME UP (not working)
-// function reStart () {
-//     alert("here we go again");
-// }
-
-// $("#restart").on("click", function () {
-//     alert("yeah!");
-// });
 
